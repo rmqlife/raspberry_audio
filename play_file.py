@@ -4,15 +4,17 @@ import sys
 # coding=utf8
 reload(sys)
 sys.setdefaultencoding('utf-8')
+def kill_all():
+	os.system("killall omxplayer.bin")	
 
 def play_single(file_path):
 	cmd="omxplayer %s"%file_path.encode('utf8')
 	print cmd
-	# os.system(cmd)
 	import subprocess
+	kill_all()
+	import time
+	time.sleep(1)
 	p=subprocess.Popen(cmd,shell=True)
-	print p
-	#	p.wait()
 	return p
 
 def play_dir(target_dir):
