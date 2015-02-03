@@ -6,8 +6,9 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 def play_single(file_path):
-	print file_path.encode('utf8')
-	os.system("omxplayer "+file_path.encode('utf8'))
+	cmd="omxplayer %s"%file_path.encode('utf8')
+	print cmd
+	os.system(cmd)
 
 
 def play_dir(target_dir):

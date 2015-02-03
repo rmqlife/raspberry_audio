@@ -4,17 +4,32 @@ import play_file
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
 app =  Flask(__name__)
 
 @app.route('/')
 def index():
-	return 'Index Page'
+	return '''<h1>Air Music Player</h1> <h2><a href="/ls">list files</a></h2>'''
 
-@app.route('/pl/')
-def play_lake():
-	play_file.play_single("lake.mp3")
-	return 'playing lake.mp3'
+@app.route('/pl/<path:file_path>')
+def play_single(file_path):
+	play_file.play_single(file_path)
+	return '<h2>playing %s</h2> <h2><a href="/ls/">back to list</h2>'%file_path
+
+@app.route('/ls/')
+def list_file():
+	import os
+	print "list"
+	filepath_list=list()
+	for root,dirs,files in os.walk("./Music"):
+		for filepath in files:
+			if filepath.endswith('.mp3'):
+				print os.path.join(root,filepath)
+				filepath_list.append(os.path.join(root,filepath))
+	output=""
+	for path in filepath_list:
+		link="/pl/%s"% (path)
+		output=output+'''<p><a href="%s">%s</a></p>'''%(link , path)
+	return output
 
 @app.route('/user/<username>')
 def show_user_profile(username):
