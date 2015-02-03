@@ -10,10 +10,17 @@ app =  Flask(__name__)
 def index():
 	return '''<h1>Air Music Player</h1> <h2><a href="/ls">list files</a></h2>'''
 
+@app.route('/kill/<int:pid>')
+def kill(pid):
+	import os
+	os.system("killall omxplayer.bin")
+	return '''<h1>kill %d<>''' % pid
+
 @app.route('/pl/<path:file_path>')
 def play_single(file_path):
-	play_file.play_single(file_path)
-	return '<h2>playing %s</h2> <h2><a href="/ls/">back to list</h2>'%file_path
+	kill(0)
+	p=play_file.play_single(file_path)
+	return '<h2>playing %s</h2> <h2>stop %d</h2> <h2><a href="/ls/">back to list</h2>'%(file_path,p.pid)
 
 @app.route('/ls/')
 def list_file():
@@ -30,6 +37,7 @@ def list_file():
 		link="/pl/%s"% (path)
 		output=output+'''<p><a href="%s">%s</a></p>'''%(link , path)
 	return output
+
 
 @app.route('/user/<username>')
 def show_user_profile(username):

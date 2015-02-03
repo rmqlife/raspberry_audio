@@ -8,8 +8,12 @@ sys.setdefaultencoding('utf-8')
 def play_single(file_path):
 	cmd="omxplayer %s"%file_path.encode('utf8')
 	print cmd
-	os.system(cmd)
-
+	# os.system(cmd)
+	import subprocess
+	p=subprocess.Popen(cmd,shell=True)
+	print p
+	#	p.wait()
+	return p
 
 def play_dir(target_dir):
 	print target_dir
@@ -18,4 +22,5 @@ def play_dir(target_dir):
 			play_single(os.path.join(target_dir,i))
 
 if __name__=="__main__":
-	play_dir(sys.argv[1])
+	play_single("lake.mp3")
+	#play_dir(sys.argv[1])
