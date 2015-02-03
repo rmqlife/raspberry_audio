@@ -11,10 +11,10 @@ app =  Flask(__name__)
 def index():
 	return 'Index Page'
 
-@app.route('/pd')
-def play_dir():
-	play_file.play_dir("lijian-yiran")
-	return 'playing dir'
+@app.route('/pl/')
+def play_lake():
+	play_file.play_single("lake.mp3")
+	return 'playing lake.mp3'
 
 @app.route('/user/<username>')
 def show_user_profile(username):
@@ -23,5 +23,5 @@ def show_user_profile(username):
 
 #print "name is", __name__ 
 if __name__ == '__main__':
-	app.run(host="0.0.0.0",debug=True)
+	app.run(host="0.0.0.0",port=80,debug=True)
 
