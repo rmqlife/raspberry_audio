@@ -1,10 +1,16 @@
 from flask import Flask
-import play_file
 # -*- coding: utf-8 -*-
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 app =  Flask(__name__)
+
+
+@app.route('/hello/')
+@app.route('/hello/<name>')
+def hello(name=None):
+	from flask import render_template
+	return render_template("hello.html",name=name)
 
 @app.route('/')
 def index():
@@ -12,13 +18,16 @@ def index():
 
 @app.route('/kill/')
 def kill():
-	play_file.kill_all()
+	from play_file import kill_all
+	kill_all()
 	return list_file()
 	
 @app.route('/pl/<path:file_path>')
 def play_single(file_path):
-	p=play_file.play_single(file_path)
-	return '<h2>playing %s</h2> <h2>pid=%d <a href="/kill">stop</a></h2> <h2><a href="/ls/">back to list</h2>'%(file_path,p.pid)
+	from play_file import play_single 
+	from flask import render_template
+	p=play_single(file_path)
+	return render_template("play.html",pid=p.pid,file_path=file_path)
 
 @app.route('/ls/')
 def list_file():
@@ -41,6 +50,12 @@ def list_file():
 def show_user_profile(username):
 	#show the user profile for that user
 	return 'User %s' % username
+
+#fail to use
+@app.route('/gen/')
+def generate_url():
+	with app.test_request_context():
+		print url_for('login')
 
 #print "name is", __name__ 
 if __name__ == '__main__':
