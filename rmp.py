@@ -1,20 +1,38 @@
 from flask import Flask
+from flask import render_template
+from flask import request
 # -*- coding: utf-8 -*-
 import sys
+import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
-app =  Flask(__name__)
+LIB_FOLDER="./Music"
+UPLOAD_FOLDER="upload"
+app = Flask(__name__)
+app.config['LIB_FOLDER'] = LIB_FOLDER
+app.config['UPLOAD_FOLDER'] = os.path.join(LIB_FOLDER,UPLOAD_FOLDER)
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+	os.mkdir(app.config['UPLOAD_FOLDER'])
 
+with app.test_request_context('/hello'):
+	assert request.path == '/hello'
 
+@app.route('/upload/',methods=['GET','POST'])
+def upload_file():
+	if request.method == 'POST':
+		f =  request.files['file']
+		f.save(os.path.join(app.config['UPLOAD_FOLDER'], f.filename))	
+	return render_template("upload.html")
+		
 @app.route('/hello/')
 @app.route('/hello/<name>')
 def hello(name=None):
-	from flask import render_template
 	return render_template("hello.html",name=name)
 
 @app.route('/')
 def index():
-	return '''<h1>Air Music Player</h1> <h2><a href="/ls">list files</a></h2>'''
+	return render_template("index.html")
+
 
 @app.route('/kill/')
 def kill():
@@ -31,10 +49,8 @@ def play_single(file_path):
 
 @app.route('/ls/')
 def list_file():
-	import os
-	print "list"
 	filepath_list=list()
-	for root,dirs,files in os.walk("./Music"):
+	for root,dirs,files in os.walk(app.config['LIB_FOLDER']):
 		for filepath in files:
 			if filepath.endswith('.mp3'):
 				print os.path.join(root,filepath)
@@ -42,20 +58,13 @@ def list_file():
 	output=""
 	for path in filepath_list:
 		link="/pl/%s"% (path)
-		output=output+'''<p><a href="%s">%s</a></p>'''%(link , path)
+		output = output + '''<p><a href="%s">%s</a></p>'''%(link , path)
 	return output
-
 
 @app.route('/user/<username>')
 def show_user_profile(username):
 	#show the user profile for that user
 	return 'User %s' % username
-
-#fail to use
-@app.route('/gen/')
-def generate_url():
-	with app.test_request_context():
-		print url_for('login')
 
 #print "name is", __name__ 
 if __name__ == '__main__':
