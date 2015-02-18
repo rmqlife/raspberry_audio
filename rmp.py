@@ -46,7 +46,7 @@ def aloha():
 def kill():
 	from play_file import kill_all
 	kill_all()
-	return list_file()
+	return redirect(url_for('list_dir')) 
 	
 @app.route('/play/<path:file_path>')
 def play_single(file_path):
@@ -80,13 +80,23 @@ def list_dir(subdir=app.config['LIB_FOLDER']):
 		if os.path.isdir(full_path):
 			print d
 			link=url_for('list_file',subdir=full_path)
-			output = output + '''<p><a href="%s">%s</a></p>'''%(link , full_path)
+			output = output + '''<p><a href="%s">%s</a></p>'''%(link , d)
 	return output
 
 @app.route('/user/<username>')
 def show_user_profile(username):
 	#show the user profile for that user
 	return 'User %s' % username
+
+@app.route('/add/')
+def add_int():
+	a = request.args.get('a', 0, type=int)
+	b = request.args.get('b', 0, type=int)
+	return str(a+b)
+
+@app.route('/test_add/')
+def test_add():
+	return redirect(url_for('add_int',a=2,b=1))
 
 #print "name is", __name__ 
 if __name__ == '__main__':
